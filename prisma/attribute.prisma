@@ -1,0 +1,211 @@
+/// Kiểu dữ liệu của một đặc tính.
+enum AttributeDataType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  DATE
+  SELECT
+  MULTI_SELECT
+}
+
+/// Đặc tính dùng chung cho sản phẩm hoặc riêng cho biến thể/SKU.
+enum AttributeScope {
+  PRODUCT
+  VARIANT
+}
+
+/// Nhóm hiển thị thành một khối thông số có thể thu gọn trên client.
+model AttributeGroup {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  category Category
+
+  code      String
+  name      String
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  assignments CategoryAttribute[]
+
+  @@unique([category, code])
+  @@index([category, sortOrder])
+  @@map("attribute_groups")
+}
+
+/// Định nghĩa đặc tính dùng chung giữa các danh mục, ví dụ RAM.
+model Attribute {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  code     String            @unique
+  name     String
+  dataType AttributeDataType
+  unit     String?
+  isActive Boolean           @default(true)
+
+  assignments        CategoryAttribute[]
+  options            AttributeOption[]
+  productValues      ProductAttributeValue[]
+  productMultiValues ProductAttributeOptionValue[]
+  variantValues      VariantAttributeValue[]
+  variantMultiValues VariantAttributeOptionValue[]
+
+  @@index([dataType])
+  @@map("attributes")
+}
+
+/// Cấu hình vị trí và quy tắc của đặc tính trong một nhóm thuộc danh mục.
+model CategoryAttribute {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  groupId     String
+  attributeId String
+
+  scope        AttributeScope @default(PRODUCT)
+  isRequired   Boolean        @default(false)
+  isFilterable Boolean        @default(false)
+  isComparable Boolean        @default(false)
+  isActive     Boolean        @default(true)
+  sortOrder    Int            @default(0)
+
+  group     AttributeGroup @relation(fields: [groupId], references: [id])
+  attribute Attribute      @relation(fields: [attributeId], references: [id])
+
+  @@unique([groupId, attributeId])
+  @@index([groupId, sortOrder])
+  @@index([attributeId])
+  @@map("category_attributes")
+}
+
+model AttributeOption {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  attributeId String
+
+  value     String
+  label     String
+  sortOrder Int    @default(0)
+
+  attribute           Attribute                     @relation(fields: [attributeId], references: [id])
+  productSingleValues ProductAttributeValue[]
+  productMultiValues  ProductAttributeOptionValue[]
+  variantSingleValues VariantAttributeValue[]
+  variantMultiValues  VariantAttributeOptionValue[]
+
+  @@unique([attributeId, value])
+  @@index([attributeId, sortOrder])
+  @@map("attribute_options")
+}
+
+/// Giá trị đơn của một đặc tính thuộc sản phẩm.
+model ProductAttributeValue {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  productId   String
+  attributeId String
+
+  valueText    String?
+  valueNumber  Decimal?  @db.Decimal(15, 4)
+  valueBoolean Boolean?
+  valueDate    DateTime? @db.Date
+  optionId     String?
+
+  product   Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  attribute Attribute        @relation(fields: [attributeId], references: [id])
+  option    AttributeOption? @relation(fields: [optionId], references: [id])
+
+  @@unique([productId, attributeId])
+  @@index([attributeId, valueNumber])
+  @@index([attributeId, valueText])
+  @@index([productId])
+  @@map("product_attribute_values")
+}
+
+/// Các lựa chọn của một đặc tính nhiều giá trị thuộc sản phẩm.
+model ProductAttributeOptionValue {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  productId   String
+  attributeId String
+  optionId    String
+
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  attribute Attribute       @relation(fields: [attributeId], references: [id])
+  option    AttributeOption @relation(fields: [optionId], references: [id])
+
+  @@unique([productId, attributeId, optionId])
+  @@index([attributeId, optionId])
+  @@map("product_attribute_option_values")
+}
+
+/// Giá trị đơn của một đặc tính thuộc biến thể/SKU.
+model VariantAttributeValue {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  variantId   String
+  attributeId String
+
+  valueText    String?
+  valueNumber  Decimal?  @db.Decimal(15, 4)
+  valueBoolean Boolean?
+  valueDate    DateTime? @db.Date
+  optionId     String?
+
+  variant   ProductVariant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  attribute Attribute        @relation(fields: [attributeId], references: [id])
+  option    AttributeOption? @relation(fields: [optionId], references: [id])
+
+  @@unique([variantId, attributeId])
+  @@index([attributeId, valueNumber])
+  @@index([attributeId, valueText])
+  @@index([variantId])
+  @@map("variant_attribute_values")
+}
+
+/// Các lựa chọn của một đặc tính nhiều giá trị thuộc biến thể/SKU.
+model VariantAttributeOptionValue {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  variantId   String
+  attributeId String
+  optionId    String
+
+  variant   ProductVariant  @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  attribute Attribute       @relation(fields: [attributeId], references: [id])
+  option    AttributeOption @relation(fields: [optionId], references: [id])
+
+  @@unique([variantId, attributeId, optionId])
+  @@index([attributeId, optionId])
+  @@map("variant_attribute_option_values")
+}

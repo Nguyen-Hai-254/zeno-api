@@ -1,0 +1,103 @@
+// Tạm hoãn phần tồn kho để triển khai quản lý sản phẩm trước.
+// /// Mỗi cửa hàng và kho tổng là một địa điểm tồn kho riêng.
+// enum InventoryLocationType {
+//   CENTRAL_WAREHOUSE
+//   STORE
+// }
+
+// model InventoryLocation {
+//   id        String   @id @default(cuid())
+//   createdAt DateTime @default(now())
+//   createdBy String?
+//   updatedAt DateTime @updatedAt
+//   updatedBy String?
+
+//   code     String                @unique
+//   name     String
+//   type     InventoryLocationType
+//   isActive Boolean               @default(true)
+
+//   inventory         Inventory[]
+//   serializedItems   SerializedItem[]
+//   outgoingMovements InventoryMovement[] @relation("MovementFromLocation")
+//   incomingMovements InventoryMovement[] @relation("MovementToLocation")
+
+//   @@index([type])
+//   @@map("inventory_locations")
+// }
+
+// /// Tồn của một SKU tại một địa điểm, thay vì một tồn chung toàn hệ thống.
+// model Inventory {
+//   id        String   @id @default(cuid())
+//   createdAt DateTime @default(now())
+//   createdBy String?
+//   updatedAt DateTime @updatedAt
+//   updatedBy String?
+
+//   variantId  String
+//   locationId String
+
+//   quantity         Int @default(0)
+//   reservedQuantity Int @default(0)
+
+//   variant  ProductVariant    @relation(fields: [variantId], references: [id])
+//   location InventoryLocation @relation(fields: [locationId], references: [id])
+
+//   @@unique([variantId, locationId])
+//   @@index([locationId])
+//   @@map("inventory")
+// }
+
+// /// Một điện thoại/máy tính cụ thể; quy tắc serial/IMEI chi tiết do API kiểm tra.
+// model SerializedItem {
+//   id        String   @id @default(cuid())
+//   createdAt DateTime @default(now())
+//   createdBy String?
+//   updatedAt DateTime @updatedAt
+//   updatedBy String?
+
+//   variantId  String
+//   locationId String
+
+//   serialNumber String? @unique
+//   imei1        String? @unique
+//   imei2        String? @unique
+
+//   variant   ProductVariant      @relation(fields: [variantId], references: [id])
+//   location  InventoryLocation   @relation(fields: [locationId], references: [id])
+//   movements InventoryMovement[]
+
+//   @@index([variantId, locationId])
+//   @@map("serialized_items")
+// }
+
+// /// Sổ lịch sử cho nhập, bán và điều chuyển tồn; không thay thế quy tắc xử lý nghiệp vụ.
+// model InventoryMovement {
+//   id        String   @id @default(cuid())
+//   createdAt DateTime @default(now())
+//   createdBy String?
+//   updatedAt DateTime @updatedAt
+//   updatedBy String?
+
+//   variantId        String
+//   fromLocationId   String?
+//   toLocationId     String?
+//   serializedItemId String?
+//   performedById    String?
+
+//   quantity Int
+//   reason   String
+
+//   variant        ProductVariant     @relation(fields: [variantId], references: [id])
+//   fromLocation   InventoryLocation? @relation("MovementFromLocation", fields: [fromLocationId], references: [id])
+//   toLocation     InventoryLocation? @relation("MovementToLocation", fields: [toLocationId], references: [id])
+//   serializedItem SerializedItem?    @relation(fields: [serializedItemId], references: [id])
+//   performedBy    User?              @relation(fields: [performedById], references: [id], onDelete: Restrict)
+
+//   @@index([variantId, createdAt])
+//   @@index([fromLocationId])
+//   @@index([toLocationId])
+//   @@index([serializedItemId])
+//   @@index([performedById])
+//   @@map("inventory_movements")
+// }

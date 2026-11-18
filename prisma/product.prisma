@@ -1,0 +1,78 @@
+/// Trạng thái danh mục sản phẩm theo mẫu đã chọn.
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+// /// Cách quản lý tồn của một SKU.
+// enum InventoryTrackingMode {
+//   QUANTITY
+//   SERIAL_IMEI
+// }
+
+/// Nhóm hàng cố định của Zeno; đổi danh sách này cần cập nhật schema và migration.
+enum Category {
+  PHONE
+  TABLET
+  LAPTOP
+  SMART_WATCH
+  DESKTOP
+  MONITOR // Màn hình
+  ACCESSORY // Phụ kiện
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  name        String
+  slug        String        @unique
+  description String?       @db.Text
+  status      ProductStatus @default(DRAFT)
+
+  category Category
+
+  variants         ProductVariant[]
+  attributeValues  ProductAttributeValue[]
+  attributeOptions ProductAttributeOptionValue[]
+
+  @@index([category])
+  @@index([status])
+  @@map("products")
+}
+
+model ProductVariant {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  createdBy String?
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  productId String
+
+  sku     String  @unique
+  barcode String? @unique
+
+  price     Decimal  @db.Decimal(15, 2)
+  salePrice Decimal? @db.Decimal(15, 2)
+
+  isDefault Boolean @default(false)
+  isActive  Boolean @default(true)
+  // trackingMode InventoryTrackingMode
+
+  product          Product                       @relation(fields: [productId], references: [id])
+  attributeValues  VariantAttributeValue[]
+  attributeOptions VariantAttributeOptionValue[]
+  // inventory        Inventory[]
+  // serializedItems  SerializedItem[]
+  // movements        InventoryMovement[]
+
+  @@index([productId])
+  @@index([isActive])
+  @@map("product_variants")
+}
