@@ -29,6 +29,7 @@ model Product {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   name        String
   slug        String        @unique
@@ -52,6 +53,7 @@ model ProductVariant {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   productId String
 

@@ -13,6 +13,7 @@ model User {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   email String  @unique
   name  String?

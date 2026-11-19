@@ -1,0 +1,11 @@
+ALTER TABLE "User" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "products" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "product_variants" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "attribute_groups" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "attributes" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "category_attributes" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "attribute_options" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "product_attribute_values" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "product_attribute_option_values" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "variant_attribute_values" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "variant_attribute_option_values" ADD COLUMN "isDeleted" BOOLEAN NOT NULL DEFAULT false;

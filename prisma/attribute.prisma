@@ -21,6 +21,7 @@ model AttributeGroup {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   category Category
 
@@ -43,6 +44,7 @@ model Attribute {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   code     String            @unique
   name     String
@@ -68,6 +70,7 @@ model CategoryAttribute {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   groupId     String
   attributeId String
@@ -94,6 +97,7 @@ model AttributeOption {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   attributeId String
 
@@ -119,6 +123,7 @@ model ProductAttributeValue {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   productId   String
   attributeId String
@@ -147,6 +152,7 @@ model ProductAttributeOptionValue {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   productId   String
   attributeId String
@@ -168,6 +174,7 @@ model VariantAttributeValue {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   variantId   String
   attributeId String
@@ -196,6 +203,7 @@ model VariantAttributeOptionValue {
   createdBy String?
   updatedAt DateTime @updatedAt
   updatedBy String?
+  isDeleted Boolean  @default(false)
 
   variantId   String
   attributeId String
